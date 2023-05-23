@@ -1,0 +1,319 @@
+Регистрация
+
+Метод: POST
+
+URL: /api/register
+
+Параметры запроса:
+
+- email: строка, обязательный параметр, содержащий email пользователя
+- password: строка, обязательный параметр, содержащий пароль пользователя
+
+Ответы:
+
+- 200 OK: если пользователь успешно зарегистрирован, возвращает сообщение "Welcome to the club!"
+- 500 Internal Server Error: если при регистрации произошла ошибка, возвращает сообщение "Error registering new user"
+
+Пример запроса:
+
+POST /api/register HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123456"
+}
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Welcome to the club!
+
+-------------------------------------------
+
+Авторизация
+
+
+Метод: POST
+
+URL: /api/login
+
+Параметры запроса:
+
+- email: строка, обязательный параметр, содержащий email пользователя
+- password: строка, обязательный параметр, содержащий пароль пользователя
+
+Ответы:
+
+- 200 OK: если пользователь успешно авторизован, возвращает токен и refreshToken в формате JSON
+- 401 Unauthorized: если пользователь не найден или пароль неверный, возвращает сообщение "Invalid email or password"
+- 500 Internal Server Error: если при авторизации произошла ошибка, возвращает сообщение "Error on the server."
+
+Пример запроса:
+
+POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123456"
+}
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMzQ4MjJlZDlhNjY0M2U5ZjQ3YjA2ZSIsImlhdCI6MTYyMzY1NzU5MCwiZXhwIjoxNjIzNjU4MzkwfQ.6aZvHrB8Xn4QbV9e3hL9vWk7K5m6s5FfJdDmJ8z8L9o",
+  "refreshToken": "1de6e6f1f0f5b4d3c6ac2b4a9b2a6c7d7e5d4c3b2a1e0f9d8c7b6a5d4e3c2b1a"
+}
+
+-------------------------------------------
+
+Выход
+
+Метод: POST
+
+URL: /api/logout
+
+Параметры запроса:
+
+- x-refresh-token: строка, обязательный параметр, содержащий refreshToken пользователя
+
+Ответы:
+
+- 200 OK: если пользователь успешно вышел из системы, возвращает сообщение "Logout successful"
+- 500 Internal Server Error: если при выходе из системы произошла ошибка, возвращает сообщение "Error on the server."
+
+Пример запроса:
+
+POST /api/logout HTTP/1.1
+Host: example.com
+x-refresh-token: 1de6e6f1f0f5b4d3c6ac2b4a9b2a6c7d7e5d4c3b2a1e0f9d8c7b6a5d4e3c2b1a
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Logout successful
+
+-------------------------------------------
+
+Обновление токена доступа
+
+Метод: POST
+
+URL: /api/token/refresh
+
+Параметры запроса:
+
+- refreshToken: строка, обязательный параметр, содержащий refreshToken пользователя
+
+Ответы:
+
+- 200 OK: если токен успешно обновлен, возвращает новый accessToken в формате JSON
+- 401 Unauthorized: если refreshToken не предоставлен или неверный, возвращает сообщение "Refresh token not provided" или "Invalid refresh token"
+- 500 Internal Server Error: если при обновлении токена произошла ошибка, возвращает сообщение "Error on the server."
+
+Пример запроса:
+
+POST /api/token/refresh HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+    "refreshToken": "1de6e6f1f0f5b4d3c6ac2b4a9b2a6c7d7e5d4c3b2a1e0f9d8c7b6a5d4e3c2b1a"
+}
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZjQxNTg5NzVjYjEzMDAxNzQ2MjQyYSIsImlhdCI6MTYwMzY0MjU3NCwiZXhwIjoxNjAzNzI5Mzc0fQ.WJwZrL9r4iLJnTl1g5r_7O4LpQ2xk0ZVj9v9kxRZnJY"
+}
+
+-------------------------------------------
+
+Создание поста
+
+Метод: POST
+
+URL: /api/posts
+
+Параметры запроса:
+
+- text: строка, обязательный параметр, содержащий текст поста
+- media: файлы, необязательный параметр, содержащий медиафайлы, прикрепленные к посту
+
+Заголовки запроса:
+
+- Authorization: строка, обязательный параметр, содержащий accessToken пользователя
+
+Ответы:
+
+- 200 OK: если пост успешно создан, возвращает сообщение "Post created successfully."
+- 401 Unauthorized: если accessToken не предоставлен или неверный, возвращает сообщение "Unauthorized"
+- 500 Internal Server Error: если при создании поста произошла ошибка, возвращает сообщение "Error creating post."
+
+Пример запроса:
+
+POST /api/posts HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZjQxNTg5NzVjYjEzMDAxNzQ2MjQyYSIsImlhdCI6MTYwMzY0MjU3NCwiZXhwIjoxNjAzNzI5Mzc0fQ.WJwZrL9r4iLJnTl1g5r_7O4LpQ2xk0ZVj9v9kxRZnJY
+
+Content-Disposition: form-data; name="text"
+
+This is a test post.
+
+Content-Disposition: form-data; name="media"; filename="image.jpg"
+Content-Type: image/jpeg
+
+<binary data>
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Post created successfully.
+
+-------------------------------------------
+
+Получение списка постов
+
+Метод: GET
+
+URL: /api/posts
+
+Параметры запроса:
+
+- page: число, необязательный параметр, номер страницы списка постов (по умолчанию 1)
+
+Заголовки запроса:
+
+- Отсутствуют
+
+Ответы:
+
+- 200 OK: если список постов успешно получен, возвращает массив объектов постов
+- 500 Internal Server Error: если при получении списка постов произошла ошибка, возвращает сообщение "Error getting posts."
+
+Пример запроса:
+
+GET /api/posts?page=2 HTTP/1.1
+Host: example.com
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+    {
+        "_id": "5ff4158975cb13001746242a",
+        "text": "This is a test post.",
+        "media": "https://example.com/image.jpg",
+        "created": "2021-01-04T12:34:56.789Z"
+    },
+    {
+        "_id": "5ff4158975cb13001746242b",
+        "text": "This is another test post.",
+        "media": null,
+        "created": "2021-01-03T12:34:56.789Z"
+    }
+]
+
+-------------------------------------------
+
+Обновление поста
+
+Метод: PUT
+
+URL: /api/posts/:id
+
+Параметры запроса:
+
+- id: строка, обязательный параметр, идентификатор поста, который нужно обновить
+
+Заголовки запроса:
+
+- Authorization: строка с префиксом "Bearer", обязательный заголовок, содержит токен авторизации пользователя
+
+Тело запроса:
+
+- text: строка, необязательный параметр, новый текст поста
+- media: строка, необязательный параметр, новое медиа-содержимое поста
+
+Ответы:
+
+- 200 OK: если пост успешно обновлен, возвращает сообщение "Post updated successfully"
+- 401 Unauthorized: если пользователь не авторизован или не является автором поста, возвращает сообщение "Not authorized to edit this post."
+- 500 Internal Server Error: если при обновлении поста произошла ошибка, возвращает сообщение "Error updating post."
+
+Пример запроса:
+
+PUT /api/posts/5ff4158975cb13001746242a HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+    "text": "This is an updated test post.",
+    "media": "https://example.com/new_image.jpg"
+}
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Post updated successfully
+
+-------------------------------------------
+
+Удаление поста
+
+Метод: DELETE
+
+URL: /api/posts/:id
+
+Данный запрос используется для удаления существующего поста. Для выполнения запроса необходимо передать идентификатор поста, который нужно удалить, в параметре id. Также необходимо передать токен авторизации пользователя в заголовке Authorization.
+
+Параметры запроса:
+
+- id: строка, обязательный параметр, идентификатор поста, который нужно удалить
+
+Заголовки запроса:
+
+- Authorization: строка с префиксом "Bearer", обязательный заголовок, содержит токен авторизации пользователя
+
+Ответы:
+
+- 200 OK: если пост успешно удален, возвращает сообщение "Post deleted successfully."
+- 401 Unauthorized: если пользователь не авторизован или не является автором поста, возвращает сообщение "Not authorized to delete this post."
+- 500 Internal Server Error: если при удалении поста произошла ошибка, возвращает сообщение "Error deleting post."
+
+Пример запроса:
+
+DELETE /api/posts/5ff4158975cb13001746242a HTTP/1.1
+Host: example.com
+Authorization: Bearer <token>
+
+Пример ответа:
+
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Post deleted successfully.
+
+-------------------------------------------
+
